@@ -63,7 +63,7 @@ app.get('/', (req, res) => res.sendStatus(404))
 app.get('/calendarview/frontconfig', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin","yoniwas.com, localhost:"+port);
     let result = [];
-    var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+    var fullUrl = /* req.protocol + '://' + req.get('host') + */ req.originalUrl;
     for (let i=0;i<icalConfig.length;i++) {
         result.push({
             type: "ical",
