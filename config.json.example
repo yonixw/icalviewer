@@ -1,0 +1,17 @@
+[
+    {
+        "hideInfo": true,
+        "isPublicGoogle": false,
+        "url": "https://calendar.google.com/calendar/ical/username%40gmail.com/private-TOKEN/basic.ics"
+    },
+    {
+        "hideInfo": true,
+        "isPublicGoogle": false,
+        "url": "https://outlook.office365.com/owa/calendar/TOKEN@outlook.com/TOKEN/TOKEN/reachcalendar.ics"
+    },
+    {
+        "hideInfo": false,
+        "isPublicGoogle": true,
+        "url": "https://calendar.google.com/calendar/embed?src=iw.jewish%23holiday%40group.v.calendar.google.com&ctz=Asia%2FJerusalem"
+    }
+]

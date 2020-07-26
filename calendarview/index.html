@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--
+  Any copyright is dedicated to the Public Domain.
+  http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Calendar</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="lib/fullcalendar.min.css">
+    <link href="https://fonts.googleapis.com/css?family=B612&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="calendarview.css">
+    <script src="lib/jquery-3.1.0.min.js"></script>
+    <script src="lib/moment.min.js"></script>
+    <script src="lib/fullcalendar.min.js"></script>
+    <script src="lib/ical.min.js"></script>
+    <script src="lib/localforage.min.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="lib/babel.min.js"></script>
+    <!-- This sucks but I really like arrow functions -->
+    
+  </head>
+  <body>
+    <div id="calendar"></div>
+    <div id="settings">
+      <p><ul id="calendars-list"></ul>
+      <p><label for="ical-url">ICS URL:</label><input type="text" id="ical-url"><button id="add-ical">Add ICS calendar</button>
+      <p><a href="https://github.com/luser/calendarview">GitHub project page</a>
+    </div>
+
+    <script>
+      function init() { 
+        // Test for some ES6 support.
+        var scripts = ['icalsource.js', 'gcal.js', 'calendarview.js'];
+        var es6_support;
+        try {
+          new Function('(...a) => { for (x of a) {} }');
+          es6_support = true;
+        } catch(e) {
+          es6_support = false;
+        }
+        function add_script(script, type) {
+          var s = document.createElement('script');
+          s.src = script;
+          if (type) {
+            s.type = type;
+          }
+          document.head.appendChild(s);
+        }
+        for (var i = 0; i < scripts.length; i++) {
+          add_script(scripts[i], es6_support ? '' : 'text/babel');
+        }
+      }
+
+      fetch("frontconfig").then((r)=>r.json()).then((config)=> {
+        // Add Calanders (yoni)
+        localforage.setItem('calendars', config);
+        init();
+      })
+    </script>
+  </body>
+</html>
