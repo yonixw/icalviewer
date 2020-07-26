@@ -54,6 +54,27 @@ console.log("Found " + icalConfig.length + " icals configs");
 
 app.use(require('express-log-url'));
 
+
+
+
+app.get('/', (req, res) => res.sendStatus(404))
+
+
+app.get('/calendarview/frontconfig', (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin","yoniwas.com, localhost:"+port);
+    let result = [];
+    var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+    for (let i=0;i<icalConfig.length;i++) {
+        result.push({
+            type: "ical",
+            url: fullUrl.replace("frontconfig",i + "/ical")
+        })
+    }
+    res.send(result);
+})
+
+app.use('/calendarview', express.static('./calendarview/',{index:"index.html",}));
+
 // ============ Setup cache
 
 const ExpressCache = require('express-cache-middleware')
@@ -66,10 +87,6 @@ const cacheMiddleware = new ExpressCache(
 )
 
 cacheMiddleware.attach(app)
-
-
-
-app.get('/', (req, res) => res.sendStatus(404))
 
 
 app.get('/calendarview/:id/ical',(req,res)=>{
@@ -95,19 +112,5 @@ app.get('/calendarview/:id/ical',(req,res)=>{
     }
 })
 
-app.get('/calendarview/frontconfig', (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin","yoniwas.com, localhost:"+port);
-    let result = [];
-    var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-    for (let i=0;i<icalConfig.length;i++) {
-        result.push({
-            type: "ical",
-            url: fullUrl.replace("frontconfig",i + "/ical")
-        })
-    }
-    res.send(result);
-})
-
-app.use('/calendarview', express.static('./calendarview/',{index:"index.html",}));
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
