@@ -17,6 +17,6 @@
     "express": "^4.17.1",
     "express-cache-middleware": "^1.0.1",
     "express-log-url": "^1.4.0",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.1"
   }
 }
