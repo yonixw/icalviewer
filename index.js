@@ -99,6 +99,7 @@ app.get('/calendarview/:id/ical',(req,res)=>{
         fetch.default(url).then((r)=>r.text()).then((txt)=>{
             if (cal.hideInfo) {
                 res.send(regexReplace(txt));
+                //res.send(txt);
             }
             else {
                 res.send(txt);
