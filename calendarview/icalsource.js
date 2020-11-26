@@ -30,12 +30,12 @@ function ical_event_source(url) {
         var comp = new ICAL.Component(data);
         var events = comp.getAllSubcomponents('vevent').map(ve => new ICAL.Event(ve));
         var color = comp.getFirstPropertyValue('x-apple-calendar-color');
-        log('ical: Got %d events', events.length);
+        console.log('ical: Got %d events', events.length);
 
         const NormalEvents = events
-        //TODO: handle recurring events
-          .filter(entry => 
-            !entry.isRecurring() && 
+          //TODO: handle recurring events
+          .filter(entry =>
+            !entry.isRecurring() &&
             (
               moment(entry.startDate.toJSDate()).isBetween(start, end, null, '[]') ||
               moment(entry.endDate.toJSDate()).isBetween(start, end, null, '[]')
@@ -55,35 +55,58 @@ function ical_event_source(url) {
           });
 
         const RepeatEvents = events
-          .filter(e=>e.isRecurring())
+          .filter(e => e.isRecurring())
           .reduce((arr, e) => {
 
             let recurrEvents = [];
 
-            const _dstart = ICAL.Time.fromJSDate(new Date(start),true);
-            _dstart.resetTo(
-                // Date from view start
-                _dstart.year,_dstart.month,_dstart.day,
 
-                // Time(+zone) from event source
-                e.startDate.hour,e.startDate.minute,e.startDate.second,
-                e.startDate.zone
+            // google special case, where not repeating unless has TRIGGER in sub-component valarm
+            const hasAlarm = (e.component.getAllSubcomponents() || { "jCal": [""] })
+              .filter(c => c.jCal[0].toLowerCase() == "valarm")
+              .length > 0;
+
+            let modifiedEnd = false;
+            let originalDuration = 0;
+            if (hasAlarm && e.endDate.toJSDate() - new Date(start) < 0) {
+              originalDuration = e.duration.toSeconds();
+              e.endDate = ICAL.Time.fromJSDate(new Date(end))
+              modifiedEnd = true;
+            }
+
+            const _dstart = ICAL.Time.fromJSDate(new Date(start), true);
+            _dstart.resetTo(
+              // Date from view start
+              _dstart.year, _dstart.month, _dstart.day,
+
+              // Time(+zone) from event source
+              e.startDate.hour, e.startDate.minute, e.startDate.second,
+              e.startDate.zone
             )
+
+
 
             var expand = new ICAL.RecurExpansion({
               component: e.component,
-              dtstart: _dstart
+              dtstart: e.startDate
             });
 
             var next;
             while (
               (next = expand.next()) &&
-               moment(next.toJSDate()).isBetween(start, end, null, '[]')
-            ){
-            
+              moment(next.toJSDate()).isBefore(start)
+            ) {
+              // Go through all past occurences
+            }
+
+            while (
+              !!next &&
+              moment(next.toJSDate()).isBetween(start, end, null, '[]')
+            ) {
+
               const startTime = next.toJSDate()
               const endTime = next.toJSDate()
-              endTime.setSeconds(endTime.getSeconds() + e.duration.toSeconds())
+              endTime.setSeconds(endTime.getSeconds() + (modifiedEnd ? originalDuration : e.duration.toSeconds()))
 
               recurrEvents.push({
                 id: e.uid,
@@ -95,14 +118,17 @@ function ical_event_source(url) {
                 location: e.location,
                 description: e.description
               })
+
+              next = expand.next();
             }
-            
+
+
 
             return arr.concat(recurrEvents);
           }, []);
 
         callback(NormalEvents.concat(RepeatEvents))
-          
+
       });
     }
   };
