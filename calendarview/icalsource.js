@@ -60,9 +60,19 @@ function ical_event_source(url) {
 
             let recurrEvents = [];
 
+            const _dstart = ICAL.Time.fromJSDate(new Date(start),true);
+            _dstart.resetTo(
+                // Date from view start
+                _dstart.year,_dstart.month,_dstart.day,
+
+                // Time(+zone) from event source
+                e.startDate.hour,e.startDate.minute,e.startDate.second,
+                e.startDate.zone
+            )
+
             var expand = new ICAL.RecurExpansion({
               component: e.component,
-              dtstart: ICAL.Time.fromJSDate(new Date(start))
+              dtstart: _dstart
             });
 
             var next;
@@ -71,10 +81,8 @@ function ical_event_source(url) {
                moment(next.toJSDate()).isBetween(start, end, null, '[]')
             ){
             
-
-              const startString = next.toString().split('T')[0] + 'T' + e.startDate.toJSDate().toISOString().split('T')[1];
-              const startTime = new Date(startString);
-              const endTime = new Date(startString)
+              const startTime = next.toJSDate()
+              const endTime = next.toJSDate()
               endTime.setSeconds(endTime.getSeconds() + e.duration.toSeconds())
 
               recurrEvents.push({
@@ -87,20 +95,6 @@ function ical_event_source(url) {
                 location: e.location,
                 description: e.description
               })
-
-              /* e.startDate.wrappedJSObject.toString()
-              "2020-10-25T09:30:00"
-              next.toString()
-              "2020-11-01T02:00:00"
-              e.duration.toSeconds() */
-
-              /*
-              [e.startDate.toJSDate(), start.toDate(), next.toJSDate()]
-                  0: Sun Oct 25 2020 09:30:00 GMT+0200 (שעון ישראל (חורף)) {}
-                  1: Sun Nov 01 2020 02:00:00 GMT+0200 (שעון ישראל (חורף)) {}
-                  2: Mon Nov 02 2020 02:00:00 GMT+0200 (שעון ישראל (חורף)) {}
-              */
-
             }
             
 
