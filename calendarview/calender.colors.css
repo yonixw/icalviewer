@@ -1,0 +1,22 @@
+.ical-src-0 {
+    /* Not used, index is 1...N */
+}
+
+.ical-src-1 {
+    background-color: #3E5C76 !important;
+    
+    opacity: 1 !important;
+}
+
+.ical-src-2 {
+    background-color: #5603AD!important;
+
+    opacity: 1 !important;
+}
+
+.ical-src-3 {
+    background-color: #F0EBD8 !important;
+    color: black !important;
+
+    opacity: 1 !important;
+}

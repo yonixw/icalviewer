@@ -131,6 +131,7 @@ function ical_event_source(url) {
 
       });
     }
+    // Color in CSS file for each cal
   };
 }
 

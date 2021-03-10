@@ -34,7 +34,7 @@ function calcInit() {
       }
     },
     height: window.innerHeight,
-    defaultView: 'month',
+    defaultView: 'agendaWeek', // month  basic\agenda+Week\Day
     timezone: 'local'
   });
   $('#add-google-calendars').on('click', () => google_auth(CLIENT_ID).then(gcal_list_calendars).then(add_gcal_list).catch(handle_err));
