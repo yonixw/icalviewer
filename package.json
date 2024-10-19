@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "cache-manager": "^3.3.0",
-    "express": "^4.19.2",
+    "express": "^4.21.1",
     "express-cache-middleware": "^1.0.1",
     "express-log-url": "^1.4.0",
     "node-fetch": "^3.2.10"
